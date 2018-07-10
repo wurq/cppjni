@@ -1,7 +1,17 @@
 #include <jni.h>
 #include <string>
 #include <android/log.h>
+#include "dnsaddr.h"
 
+
+#include <netinet/in.h>    // for sockaddr_in
+#include <sys/types.h>    // for socket
+#include <sys/socket.h>    // for socket
+#include <stdio.h>        // for printf
+#include <stdlib.h>        // for exit
+#include <unistd.h>
+#include <arpa/inet.h>
+//#include <string.h>        // for bzero
 
 static void my_thumb(int dummy)
 {
@@ -75,8 +85,8 @@ static int __attribute__((naked, pure)) MyASMTest(int a, int b)
 
 #else
 
-    asm("sub w0, w0, w1");
-    asm("ret");
+//    asm("sub w0, w0, w1");
+//    asm("ret");
 
 #endif
 }
@@ -130,7 +140,11 @@ Java_com_arch_cppjni_MainActivity_stringFromJNI(
     __android_log_write(ANDROID_LOG_DEBUG,"main_join","Messageqq");
     char strBuf[128];
 
-    sprintf(strBuf, "Hello from C! ASM test result: %d", MyASMTest(6, 4));
+    sprintf(strBuf, "Hello from C! ASM test result: %d", MyASMTest(19, 4));
+
+    dnsaddr *dnsad = new dnsaddr();
+    dnsad->setValue();
+    delete dnsad;
 
     return env->NewStringUTF(strBuf/*hello.c_str()*/);
 }
@@ -146,3 +160,63 @@ Java_com_arch_cppjni_MainActivity_stringFromJNI(
 //
 //    return dummy;
 //}
+
+
+
+#define SERVER_PORT 5000
+#define BUFFER_SIZE 1024
+#define FILE_NAME_MAX_SIZE 512
+
+int main(int argc, char **argv)
+{
+    if (argc != 2)
+    {
+        printf("Please input the IP address of the server \n", argv[0]);
+        exit(1);
+    }
+
+    //设置一个socket地址结构client_addr,代表客户机internet地址, 端口
+    struct sockaddr_in client_addr;
+    bzero(&client_addr, sizeof(client_addr)); //把一段内存区的内容全部设置为0
+    client_addr.sin_family = AF_INET; //internet协议族
+    client_addr.sin_addr.s_addr = htons(INADDR_ANY); //INADDR_ANY表示自动获取本机地址
+    client_addr.sin_port = htons(0); //0表示让系统自动分配一个空闲端口
+    //创建用于internet的流协议(TCP)socket,用client_socket代表客户机socket
+    int client_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (client_socket < 0)
+    {
+        printf("Create Socket Failed!\n");
+        exit(1);
+    }
+    //把客户机的socket和客户机的socket地址结构联系起来
+    if (bind(client_socket, (struct sockaddr*) &client_addr,
+             sizeof(client_addr)))
+    {
+        printf("Client Bind Port Failed!\n");
+        exit(1);
+    }
+
+    //设置一个socket地址结构server_addr,代表服务器的internet地址, 端口
+    struct sockaddr_in server_addr;
+    bzero(&server_addr, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    if (inet_aton(argv[1], &server_addr.sin_addr) == 0) //服务器的IP地址来自程序的参数
+    {
+        printf("Server IP Address Error! \n");
+        exit(1);
+    }
+
+    server_addr.sin_port = htons(SERVER_PORT);
+    socklen_t server_addr_length = sizeof(server_addr);
+    // 向服务器发起连接,连接成功后client_socket代表了客户机和服务器的一个socket连接
+    if (connect(client_socket, (struct sockaddr*) &server_addr,
+                server_addr_length) < 0)
+    {
+        printf("Can Not Connect To %s!\n", argv[1]);
+        exit(1);
+    }
+
+    sleep(10);
+    close(client_socket);
+    return 0;
+}
