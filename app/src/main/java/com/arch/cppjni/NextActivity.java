@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.arch.util.IpUtil;
+import com.arch.util.XHook;
 
 public class NextActivity  extends AppCompatActivity {
     private static final String TAG = "NextActivity";
@@ -19,7 +20,10 @@ public class NextActivity  extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_next);
 
-        mMainHandler.sendEmptyMessage(MSG_INIT_ASYNC_CALL);
+//        mMainHandler.sendEmptyMessage(MSG_INIT_ASYNC_CALL);
+
+        XHook.getInstance().enableDebug(true);
+
 //        (Button)findViewById(R.id.getInetaddress).setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
