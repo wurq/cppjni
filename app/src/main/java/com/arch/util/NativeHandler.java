@@ -6,7 +6,6 @@ package com.arch.util;
 
 public class NativeHandler {
 
-
     private static final NativeHandler ourInstance = new NativeHandler();
 
     public static NativeHandler getInstance() {
@@ -24,7 +23,7 @@ public class NativeHandler {
 
     public native void enableSigSegvProtection(boolean flag);
 
-    static {
-        System.loadLibrary("native-net");
-    }
+//    static {
+//        System.loadLibrary("native-lib");
+//    }
 }

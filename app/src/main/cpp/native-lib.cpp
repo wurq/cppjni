@@ -10,6 +10,11 @@
 #include <stdlib.h>        // for exit
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <strings.h>
+#include "xhcore.h"
+#include "xhook.h"
+
+//#include "xh_core.h"
 //#include <string.h>        // for bzero
 
 static void my_thumb(int dummy)
@@ -222,3 +227,43 @@ int sock()
     return 0;
 }
 
+
+extern "C"
+{
+
+JNIEXPORT jint JNICALL
+Java_com_arch_util_NativeHandler_refresh(JNIEnv *env, jobject instance, jboolean async) {
+
+    // TODO
+    return xh_core_refresh(async);
+}
+
+
+JNIEXPORT void JNICALL
+Java_com_arch_util_NativeHandler_clear(JNIEnv *env, jobject instance) {
+
+    // TODO
+    return xh_core_clear();
+}
+
+
+JNIEXPORT void
+JNICALL
+Java_com_arch_util_NativeHandler_enableDebug(JNIEnv *env, jobject instance, jboolean flag) {
+
+    return xh_core_enable_debug(flag);
+// TODO
+    __android_log_write(ANDROID_LOG_DEBUG,"NativeHandler","enableDebug");
+//    int a;
+//    a=2;
+}
+
+
+JNIEXPORT void JNICALL
+Java_com_arch_util_NativeHandler_enableSigSegvProtection(JNIEnv *env, jobject instance,
+                                                         jboolean flag) {
+
+    // TODO
+    return xh_core_enable_sigsegv_protection(flag);
+}
+}
