@@ -26,8 +26,9 @@ add_library( # Sets the name of the library.
              ${SRC_DIR}/xh_jni.cpp
              #${SRC_DIR}/xh_errno.cpp
              ${SRC_DIR}/xh_elf.cpp
+             ${SRC_DIR}/xhook.cpp
              ${SRC_DIR}/xhcore.cpp
-             ${SRC_DIR}/xhcore.h)
+             )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by

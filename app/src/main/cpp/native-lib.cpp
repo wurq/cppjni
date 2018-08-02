@@ -231,11 +231,14 @@ int sock()
 extern "C"
 {
 
+#define JNI_API_DEF(f) Java_com_arch_util_NativeHandler_##f
+
+
 JNIEXPORT jint JNICALL
-Java_com_arch_util_NativeHandler_refresh(JNIEnv *env, jobject instance, jboolean async) {
+JNI_API_DEF(refresh)(JNIEnv *env, jobject instance, jboolean async) {
 
     // TODO
-    return xh_core_refresh(async);
+    return xhook_refresh(async);
 }
 
 
@@ -243,7 +246,7 @@ JNIEXPORT void JNICALL
 Java_com_arch_util_NativeHandler_clear(JNIEnv *env, jobject instance) {
 
     // TODO
-    return xh_core_clear();
+    return xhook_clear();
 }
 
 
@@ -251,7 +254,7 @@ JNIEXPORT void
 JNICALL
 Java_com_arch_util_NativeHandler_enableDebug(JNIEnv *env, jobject instance, jboolean flag) {
 
-    return xh_core_enable_debug(flag);
+    return xhook_enable_debug(flag);
 // TODO
     __android_log_write(ANDROID_LOG_DEBUG,"NativeHandler","enableDebug");
 //    int a;
@@ -264,6 +267,6 @@ Java_com_arch_util_NativeHandler_enableSigSegvProtection(JNIEnv *env, jobject in
                                                          jboolean flag) {
 
     // TODO
-    return xh_core_enable_sigsegv_protection(flag);
+    return xhook_enable_sigsegv_protection(flag);
 }
 }
